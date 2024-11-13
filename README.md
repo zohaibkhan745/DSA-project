@@ -1,2 +1,5 @@
 # DSA-project
-Smart City Simulation System Traffic Management Emergency Services Utility Management
+Smart City Simulation System
+1. Traffic Management 
+2. Emergency Services 
+3. Utility Management
