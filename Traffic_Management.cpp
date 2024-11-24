@@ -17,11 +17,12 @@ class Vehicles{
     }
 
     void displayInfo(){
-        cout<<"ID: "<<id<<endl;
-        cout<<"Type: "<<type<<endl;
+        cout<<" <-- ID: "<<id;
+        // cout<<" Type: "<<type;
     }
     
 };
+
 class Node{
     public:
     Vehicles data;
@@ -122,27 +123,125 @@ class que{
     
 };
 
+class TrafficSignal{
+    public:
+    string state;
+    int duration;
+
+    TrafficSignal(){
+        state = "Red";
+        duration = 0;
+    }
+
+    void changeSignal(){
+        if (state == "Red"){
+            state = "Green";
+        }
+        else if (state == "Green"){
+            state = "Yellow";
+        }
+        else if (state == "Yellow"){
+            state = "Red";
+        }    
+    }
+
+    void DisplaySignal(){
+        cout<<"Signla : "<<state<<endl;
+    }
+
+    bool canPass(){
+        return state == "Green";
+    }
+};
+class Road{
+    public:
+    que TruckLane;
+    que CarLane;
+    que BikeLane;
+    TrafficSignal TruckSignal;
+    TrafficSignal CarSignal;
+    TrafficSignal BikeSignal;
+
+    void AddVehiclesToLane(Vehicles vehicle){
+        if (vehicle.type == "Truck"){
+            TruckLane.Enqueue(vehicle);
+        }
+        else if(vehicle.type == "Car"){
+            CarLane.Enqueue(vehicle);
+        }
+        else if(vehicle.type == "Bike"){
+            BikeLane.Enqueue(vehicle);
+        }
+        else{
+            cout<<"Unknown Vehicle type"<<endl;
+        }
+    }
+
+    void DisplayAllLanes(){
+        cout<<"\nTrucks Lane : ";
+        TruckLane.Display();
+
+        cout<<"\nCars Lane : ";
+        CarLane.Display();
+        
+        cout<<"\nBikes Lane : ";
+        BikeLane.Display();
+    }
+
+    void DequeueVehiclesFromLanes(string LaneType){
+        if (LaneType == "Truck"){
+            if (TruckSignal.canPass()){
+                TruckLane.Dequeue();
+            }
+            else{
+                cout<<"Truck Lane Signal is not Green! Please wait"<<endl;
+            }
+        }
+        if (LaneType == "Car"){
+            if (CarSignal.canPass()){
+                CarLane.Dequeue();
+            }
+            else{
+                cout<<"Car Lane Signal is not Green! Please wait"<<endl;
+            }
+        }
+        if (LaneType == "Bike"){
+            if (BikeSignal.canPass()){
+                BikeLane.Dequeue();
+            }
+            else{
+                cout<<"Bike Lane Signal is not Green! Please wait"<<endl;
+            }
+        }
+    }
+};
 
 
 int main(){
-    
+    // Create some vehicles
     Vehicles v1("1234", "Car");
-    Vehicles v2("5678", "Bus");
-    Vehicles v3("9101", "Truck");
+    Vehicles v2("5678", "Truck");
+    Vehicles v3("9101", "Bike");
+    Vehicles v4("1122", "Car");
+    Vehicles v5("3344", "Truck");
 
-    que q;
-    q.Enqueue(v1);
-    q.Enqueue(v2);
-    q.Enqueue(v3);
+    // Create a road instance
+    Road road;
 
-    q.Display();
-    q.Front();
-    q.Rear();
-    q.IsEmpty();
-    q.Dequeue();
-    q.Display();
-    q.Clear();
-    q.IsEmpty();
+    // Add vehicles to the respective lanes
+    road.AddVehiclesToLane(v1);
+    road.AddVehiclesToLane(v2);
+    road.AddVehiclesToLane(v3);
+    road.AddVehiclesToLane(v4);
+    road.AddVehiclesToLane(v5);
+
+    // Display all lanes
+    road.DisplayAllLanes();
+
+    // Remove a vehicle from TruckLane
+    cout << "\nRemoving a truck from the Truck Lane:\n";
+    road.TruckLane.Dequeue();
+    road.DisplayAllLanes();
 
     return 0;
 }
