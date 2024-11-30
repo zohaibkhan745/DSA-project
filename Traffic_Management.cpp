@@ -130,29 +130,37 @@ class TrafficSignal{
 
     TrafficSignal(){
         state = "Red";
-        duration = 0;
+        duration = 10;
     }
 
-    void changeSignal(){
-        if (state == "Red"){
-            state = "Green";
-        }
-        else if (state == "Green"){
-            state = "Yellow";
-        }
-        else if (state == "Yellow"){
-            state = "Red";
-        }    
+    void changeSignal(int elapsedTime){
+        duration -= elapsedTime;
+
+        if (duration <= 0){
+            if (state == "Red"){
+                state = "Green";
+                duration = 15;
+            }
+            else if (state == "Green"){
+                state = "Yellow";
+                duration = 5;
+            }
+            else if (state == "Yellow"){
+                state = "Red";
+                duration = 10;
+            }    
+        }  
     }
 
-    void DisplaySignal(){
-        cout<<"Signla : "<<state<<endl;
+    void displaySignal() {
+        cout << "Signal: " << state << " | Remaining Duration: " << duration << " seconds" << endl;
     }
 
     bool canPass(){
         return state == "Green";
     }
 };
+
 class Road{
     public:
     que TruckLane;
@@ -214,10 +222,28 @@ class Road{
             }
         }
     }
+
+    void updateAllSignals(int elapsedTime){
+        TruckSignal.changeSignal(elapsedTime);
+        CarSignal.changeSignal(elapsedTime);
+        BikeSignal.changeSignal(elapsedTime);
+    }
+
+    void displayAllSignals(){
+        cout<<"\nTruck lane Signal: ";
+        TruckSignal.displaySignal();
+
+        cout<<"Car Lane Signal: ";
+        CarSignal.displaySignal();
+
+        cout<<"Bike lane Signal: ";
+        BikeSignal.displaySignal();
+    }
 };
 
 
 int main(){
+    system("CLS");
     // Create some vehicles
     Vehicles v1("1234", "Car");
     Vehicles v2("5678", "Truck");
@@ -238,10 +264,20 @@ int main(){
     // Display all lanes
     road.DisplayAllLanes();
 
-    // Remove a vehicle from TruckLane
-    cout << "\nRemoving a truck from the Truck Lane:\n";
-    road.TruckLane.Dequeue();
-    road.DisplayAllLanes();
+    
+    for (int i = 0; i < 10; i += 5){
+        cout<<"\nTime elapsed: "<< i << " seconds"<<endl;
+
+        road.updateAllSignals(5);
+        road.displayAllSignals();
+
+        road.DequeueVehiclesFromLanes("Truck");
+        road.DequeueVehiclesFromLanes("Car");
+        road.DequeueVehiclesFromLanes("Bike");
+
+        // Display the updated lanes
+        road.DisplayAllLanes();
+    }
 
     return 0;
 }
