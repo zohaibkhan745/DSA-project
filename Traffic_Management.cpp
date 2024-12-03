@@ -19,7 +19,7 @@ class Vehicles{
     void displayInfo(){
         cout<<" <-- ID: "<<id;
         // cout<<" Type: "<<type;
-        // Mic testing
+        // cout << "Number: ";
     }
     
 };
