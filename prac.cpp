@@ -59,6 +59,7 @@ class userData{
 };
 int main()
 {
+    
     Node* head = NULL;
     userData userdata;
     userdata.insert();
