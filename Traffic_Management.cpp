@@ -39,12 +39,12 @@ class Node{
     }
 };
 
-class que{
+class ListQue{
     Node* front;
     Node* rear;
 
     public:
-    que(){
+    ListQue(){
         front = nullptr;
         rear = nullptr;
     }
@@ -117,10 +117,62 @@ class que{
     rear = nullptr;  // Reset rear to null after clearing
 }
 
-    ~que(){
+    ~ListQue(){
         Clear();
     }
     
+};
+
+class ArrayQue{
+    public:
+    int rear, front;
+    static const int size = 5;
+    Vehicles arr[size]; 
+
+    ArrayQue(){
+        rear = front = -1;
+    }
+
+    bool isFull(){
+        return (rear == 5-1); 
+    }
+
+    bool isEmpty(){
+        return front == -1;
+    }
+
+    void Enqueue(Vehicles value){
+        if (isFull()){
+            cout<<"The Lane is full, you can't add more vehicles!"<<endl;
+            return;
+        }
+        if (isEmpty()){
+            front = rear = 0;
+            arr[rear] = value;
+            return;
+        }
+        arr[++rear] = value; 
+    }
+
+    void Dequeue(){
+        if (isEmpty()){
+            cout<<"The Lane is already Empty!"<<endl;
+            return;
+        }
+        
+        if (front == rear){
+            front = rear = -1;
+        }
+        else{
+            front++;
+        }
+    }
+
+    void Display(){
+        for (int i = front; i <= rear; i++){
+            arr[i].displayInfo();
+        }
+    }
 };
 
 class TrafficSignal{
@@ -161,123 +213,203 @@ class TrafficSignal{
     }
 };
 
-class Road{
-    public:
-    que TruckLane;
-    que CarLane;
-    que BikeLane;
+class Road {
+public:
+    ListQue TruckLane_list;
+    ListQue CarLane_list;
+    ListQue BikeLane_list;
+
+    ArrayQue TruckLane_array;
+    ArrayQue CarLane_array;
+    ArrayQue BikeLane_array;
+
     TrafficSignal TruckSignal;
     TrafficSignal CarSignal;
     TrafficSignal BikeSignal;
 
-    void AddVehiclesToLane(Vehicles vehicle){
-        if (vehicle.type == "Truck"){
-            TruckLane.Enqueue(vehicle);
-        }
-        else if(vehicle.type == "Car"){
-            CarLane.Enqueue(vehicle);
-        }
-        else if(vehicle.type == "Bike"){
-            BikeLane.Enqueue(vehicle);
-        }
-        else{
-            cout<<"Unknown Vehicle type"<<endl;
+    int inputMode; // 1 for Linked List, 2 for Array
+
+    Road() {
+        inputMode = 0;
+    }
+
+    void setInputMode() {
+        cout << "1. Use Linked List." << endl;
+        cout << "2. Use Array." << endl;
+        cout << "Enter choice: ";
+        cin >> inputMode;
+        if (inputMode != 1 && inputMode != 2) {
+            cout << "Invalid choice. Defaulting to Linked List." << endl;
+            inputMode = 1;
         }
     }
 
-    void DisplayAllLanes(){
-        cout<<"\nTrucks Lane : ";
-        TruckLane.Display();
-
-        cout<<"\nCars Lane : ";
-        CarLane.Display();
-        
-        cout<<"\nBikes Lane : ";
-        BikeLane.Display();
-    }
-
-    void DequeueVehiclesFromLanes(string LaneType){
-        if (LaneType == "Truck"){
-            if (TruckSignal.canPass()){
-                TruckLane.Dequeue();
+    void AddVehiclesToLane(Vehicles vehicle) {
+        if (inputMode == 1) {
+            if (vehicle.type == "Truck") {
+                TruckLane_list.Enqueue(vehicle);
+            } else if (vehicle.type == "Car") {
+                CarLane_list.Enqueue(vehicle);
+            } else if (vehicle.type == "Bike") {
+                BikeLane_list.Enqueue(vehicle);
+            } else {
+                cout << "Unknown Vehicle type" << endl;
             }
-            else{
-                cout<<"Truck Lane Signal is not Green! Please wait"<<endl;
-            }
-        }
-        if (LaneType == "Car"){
-            if (CarSignal.canPass()){
-                CarLane.Dequeue();
-            }
-            else{
-                cout<<"Car Lane Signal is not Green! Please wait"<<endl;
-            }
-        }
-        if (LaneType == "Bike"){
-            if (BikeSignal.canPass()){
-                BikeLane.Dequeue();
-            }
-            else{
-                cout<<"Bike Lane Signal is not Green! Please wait"<<endl;
+        } else if (inputMode == 2) {
+            if (vehicle.type == "Truck") {
+                TruckLane_array.Enqueue(vehicle);
+            } else if (vehicle.type == "Car") {
+                CarLane_array.Enqueue(vehicle);
+            } else if (vehicle.type == "Bike") {
+                BikeLane_array.Enqueue(vehicle);
+            } else {
+                cout << "Unknown Vehicle type" << endl;
             }
         }
     }
 
-    void updateAllSignals(int elapsedTime){
+    void DequeueVehiclesFromLanes(string LaneType) {
+        if (inputMode == 1) {
+            if (LaneType == "Truck") {
+                if (TruckSignal.canPass()) {
+                    TruckLane_list.Dequeue();
+                } else {
+                    cout << "Truck Lane Signal is not Green! Please wait" << endl;
+                }
+            } else if (LaneType == "Car") {
+                if (CarSignal.canPass()) {
+                    CarLane_list.Dequeue();
+                } else {
+                    cout << "Car Lane Signal is not Green! Please wait" << endl;
+                }
+            } else if (LaneType == "Bike") {
+                if (BikeSignal.canPass()) {
+                    BikeLane_list.Dequeue();
+                } else {
+                    cout << "Bike Lane Signal is not Green! Please wait" << endl;
+                }
+            }
+        } else if (inputMode == 2) {
+            if (LaneType == "Truck") {
+                if (TruckSignal.canPass()) {
+                    TruckLane_array.Dequeue();
+                } else {
+                    cout << "Truck Lane Signal is not Green! Please wait" << endl;
+                }
+            } else if (LaneType == "Car") {
+                if (CarSignal.canPass()) {
+                    CarLane_array.Dequeue();
+                } else {
+                    cout << "Car Lane Signal is not Green! Please wait" << endl;
+                }
+            } else if (LaneType == "Bike") {
+                if (BikeSignal.canPass()) {
+                    BikeLane_array.Dequeue();
+                } else {
+                    cout << "Bike Lane Signal is not Green! Please wait" << endl;
+                }
+            }
+        }
+    }
+
+    void DisplayAllLanes() {
+        if (inputMode == 1) {
+            cout << "\nTrucks Lane (Linked List): ";
+            TruckLane_list.Display();
+
+            cout << "\nCars Lane (Linked List): ";
+            CarLane_list.Display();
+
+            cout << "\nBikes Lane (Linked List): ";
+            BikeLane_list.Display();
+        } else if (inputMode == 2) {
+            cout << "\nTrucks Lane (Array): ";
+            TruckLane_array.Display();
+
+            cout << "\nCars Lane (Array): ";
+            CarLane_array.Display();
+
+            cout << "\nBikes Lane (Array): ";
+            BikeLane_array.Display();
+        }
+    }
+
+    void updateAllSignals(int elapsedTime) {
         TruckSignal.changeSignal(elapsedTime);
         CarSignal.changeSignal(elapsedTime);
         BikeSignal.changeSignal(elapsedTime);
     }
 
-    void displayAllSignals(){
-        cout<<"\nTruck lane Signal: ";
+    void displayAllSignals() {
+        cout << "\nTruck lane Signal: ";
         TruckSignal.displaySignal();
 
-        cout<<"Car Lane Signal: ";
+        cout << "Car Lane Signal: ";
         CarSignal.displaySignal();
 
-        cout<<"Bike lane Signal: ";
+        cout << "Bike lane Signal: ";
         BikeSignal.displaySignal();
     }
 };
 
-
-int main(){
-    system("CLS");
-    // Create some vehicles
-    Vehicles v1("1234", "Car");
-    Vehicles v2("5678", "Truck");
-    Vehicles v3("9101", "Bike");
-    Vehicles v4("1122", "Car");
-    Vehicles v5("3344", "Truck");
-
-    // Create a road instance
+int main() {
     Road road;
+    road.setInputMode();
 
-    // Add vehicles to the respective lanes
-    road.AddVehiclesToLane(v1);
-    road.AddVehiclesToLane(v2);
-    road.AddVehiclesToLane(v3);
-    road.AddVehiclesToLane(v4);
-    road.AddVehiclesToLane(v5);
+    int choice;
+    do {
+        cout << "\nTraffic Management System Menu:" << endl;
+        cout << "1. Add Vehicle to Lane" << endl;
+        cout << "2. Remove Vehicle from Lane" << endl;
+        cout << "3. Display All Lanes" << endl;
+        cout << "4. Update Traffic Signals" << endl;
+        cout << "5. Display Traffic Signals" << endl;
+        cout << "6. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
 
-    // Display all lanes
-    road.DisplayAllLanes();
+        switch (choice) {
+        case 1: {
+            string id, type;
+            cout << "Enter Vehicle ID: ";
+            cin >> id;
+            cout << "Enter Vehicle Type (Truck/Car/Bike): ";
+            cin >> type;
+            road.AddVehiclesToLane(Vehicles(id, type));
+            break;
+        }
 
-    
-    for (int i = 0; i < 10; i += 5){
-        cout<<"\nTime elapsed: "<< i << " seconds"<<endl;
+        case 2: {
+            string laneType;
+            cout << "Enter Lane Type to Remove Vehicle (Truck/Car/Bike): ";
+            cin >> laneType;
+            road.DequeueVehiclesFromLanes(laneType);
+            break;
+        }
 
-        road.updateAllSignals(5);
-        road.displayAllSignals();
+        case 3:
+            road.DisplayAllLanes();
+            break;
 
-        road.DequeueVehiclesFromLanes("Truck");
-        road.DequeueVehiclesFromLanes("Car");
-        road.DequeueVehiclesFromLanes("Bike");
+        case 4: {
+            int elapsedTime;
+            cout << "Enter elapsed time in seconds: ";
+            cin >> elapsedTime;
+            road.updateAllSignals(elapsedTime);
+            break;
+        }
+        case 5:
+            road.displayAllSignals();
+            break;
 
-        // Display the updated lanes
-        road.DisplayAllLanes();
-    }
+        case 6:
+            cout << "Exiting the system. Goodbye!" << endl;
+            break;
+
+        default:
+            cout << "Invalid choice! Please try again." << endl;
+        }
+    } while (choice != 6);
 
     return 0;
 }
