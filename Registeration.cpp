@@ -164,6 +164,90 @@ public:
         }
         cout << "-------------------------\n";
     }
+
+    void deleteUser(User *&head, const string &email)
+    {
+        if (head == nullptr)
+        {
+            cout << "No users to delete.\n";
+            return;
+        }
+
+        User *temp = head, *prev = nullptr;
+
+        // If the user to delete is the head
+        if (temp != nullptr && temp->email == email)
+        {
+            head = temp->next;
+            delete temp;
+            cout << "User deleted successfully.\n";
+            return;
+        }
+
+        // Search for the user to delete
+        while (temp != nullptr && temp->email != email)
+        {
+            prev = temp;
+            temp = temp->next;
+        }
+
+        // If user not found
+        if (temp == nullptr)
+        {
+            cout << "User not found.\n";
+            return;
+        }
+
+        // Unlink the user and delete
+        prev->next = temp->next;
+        delete temp;
+        cout << "User deleted successfully.\n";
+    }
+};
+
+class UtilityManagement
+{
+public:
+    void manageUtilities()
+    {
+        int choice;
+        double electricityBill = 0, waterBill = 0;
+
+        while (true)
+        {
+            cout << "\n--- Utility Management System ---\n";
+            cout << "1. Pay Electricity Bill\n";
+            cout << "2. Pay Water Bill\n";
+            cout << "3. View Bills\n";
+            cout << "4. Exit\n";
+            cout << "Enter your choice: ";
+
+            cin >> choice;
+
+            switch (choice)
+            {
+            case 1:
+                cout << "Enter amount for Electricity Bill: ";
+                cin >> electricityBill;
+                cout << "Electricity Bill Paid: " << electricityBill << "\n";
+                break;
+            case 2:
+                cout << "Enter amount for Water Bill: ";
+                cin >> waterBill;
+                cout << "Water Bill Paid: " << waterBill << "\n";
+                break;
+            case 3:
+                cout << "Electricity Bill: " << electricityBill << "\n";
+                cout << "Water Bill: " << waterBill << "\n";
+                break;
+            case 4:
+                cout << "Exiting Utility Management System...\n";
+                return;
+            default:
+                cout << "Invalid choice. Try again.\n";
+            }
+        }
+    }
 };
 
 int main()
@@ -171,6 +255,7 @@ int main()
     string adminPassword;
     string adminUsername;
     Registration r;
+    UtilityManagement um;
     User *head = nullptr;
     r.loadFromFile(head);
 
@@ -203,11 +288,40 @@ int main()
                 if (adminPassword == "z123" && adminUsername == "z123")
                 {
                     opt = false;
+                    while (true)
+                    {
+                        cout << "\n--- Admin Panel ---\n";
+                        cout << "1. Display Users\n";
+                        cout << "2. Delete User\n";
+                        cout << "3. Exit Admin Panel\n";
+                        cout << "Enter your choice: ";
+                        cin >> choice;
+
+                        switch (choice)
+                        {
+                        case 1:
+                            r.displayUsers(head);
+                            break;
+                        case 2:
+                        {
+                            string email;
+                            cout << "Enter email of user to delete: ";
+                            cin >> email;
+                            r.deleteUser(head, email);
+                            break;
+                        }
+                        case 3:
+                            cout << "Exiting Admin Panel...\n";
+                            opt = true;
+                            goto exit_admin;
+                        default:
+                            cout << "Invalid choice. Try again.\n";
+                        }
+                    }
                 }
-                
+exit_admin:;
             } while (opt);
 
-            
             break;
         case 2:
             while (true)
@@ -216,7 +330,8 @@ int main()
                 cout << "\n--- User Registration and Login System ---\n";
                 cout << "1. Register\n";
                 cout << "2. Login\n";
-                cout << "3. Exit\n";
+                cout << "3. Utility Management\n";
+                cout << "4. Exit\n";
                 cout << "Enter your choice: ";
                 while (!(cin >> choice))
                 {
@@ -233,6 +348,9 @@ int main()
                     r.loginUser(head);
                     break;
                 case 3:
+                    um.manageUtilities();
+                    break;
+                case 4:
                     r.saveToFile(head); // Save data before exiting
                     cout << "Exiting...\n";
                     return 0;
