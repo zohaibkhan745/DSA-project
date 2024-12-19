@@ -1,18 +1,42 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <stack>
 #include <unordered_map>
 using namespace std;
 
-// Graph Class for Emergency Services
+class Stack {
+    vector<string> stack;
+
+public:
+    void push(string name) {
+        stack.push_back(name);
+    }
+
+    void pop() {
+        if (!stack.empty()) {
+            stack.pop_back();
+        }
+    }
+
+    string top() {
+        if (!stack.empty()) {
+            return stack.back();
+        }
+        return "";
+    }
+
+    bool empty() {
+        return stack.empty();
+    }
+};
+
 class Graph {
     unordered_map<string, vector<pair<string, int>>> adjList;
 
 public:
     void addEdge(string u, string v, int weight) {
         adjList[u].push_back({v, weight});
-        adjList[v].push_back({u, weight}); // Assuming undirected graph
+        adjList[v].push_back({u, weight});
     }
 
     void displayGraph() {
@@ -100,7 +124,7 @@ public:
         } else {
             cout << "Optimized Route (Ambulance): ";
             string node = end;
-            stack<string> path;
+            Stack path;
             while (node != start) {
                 path.push(node);
                 node = parent[node];
@@ -118,7 +142,7 @@ public:
 
 // Crowd Control using Stack and Queue
 class CrowdControl {
-    stack<string> crowdStack;
+    Stack crowdStack;
     queue<string> crowdQueue;
 
 public:
