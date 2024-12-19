@@ -20,6 +20,7 @@ class Vehicles{
         cout<<" <-- ID: "<<id;
         // cout<<" Type: "<<type;
         // cout << "Number: ";
+        // cout << "Number: ";
     }
     
 };
