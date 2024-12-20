@@ -40,6 +40,7 @@ public:
     }
 
     void displayGraph() {
+        cout << "Graph Representation:" << endl;
         for (auto& node : adjList) {
             cout << node.first << " -> ";
             for (auto& neighbor : node.second) {
@@ -56,7 +57,7 @@ public:
         q.push(start);
         visited[start] = true;
 
-        cout << "BFS Traversal: ";
+        cout << "BFS Traversal starting from " << start << ": ";
         while (!q.empty()) {
             string node = q.front();
             q.pop();
@@ -85,7 +86,7 @@ public:
 
     void dfs(string start) {
         unordered_map<string, bool> visited;
-        cout << "DFS Traversal: ";
+        cout << "DFS Traversal starting from " << start << ": ";
         dfsUtil(start, visited);
         cout << endl;
     }
@@ -118,7 +119,6 @@ public:
             }
         }
 
-        // Display route
         if (distance[end] == INT_MAX) {
             cout << "No route found from " << start << " to " << end << endl;
         } else {
@@ -140,7 +140,6 @@ public:
     }
 };
 
-// Crowd Control using Stack and Queue
 class CrowdControl {
     Stack crowdStack;
     queue<string> crowdQueue;
@@ -179,7 +178,6 @@ int main() {
     Graph emergencyGraph;
     CrowdControl crowdControl;
 
-    // Adding edges to the graph
     emergencyGraph.addEdge("Hospital", "Fire Station", 5);
     emergencyGraph.addEdge("Hospital", "Police Station", 3);
     emergencyGraph.addEdge("Fire Station", "Accident Site", 8);
@@ -190,12 +188,12 @@ int main() {
     do {
         cout << "\nEmergency Services Menu:" << endl;
         cout << "1. Display Graph" << endl;
-        cout << "2. BFS Traversal" << endl;
-        cout << "3. DFS Traversal" << endl;
-        cout << "4. Ambulance Route Optimization" << endl;
-        cout << "5. Add Person to Crowd Stack" << endl;
+        cout << "2. BFS Traversal (Enter starting location, e.g., Hospital)" << endl;
+        cout << "3. DFS Traversal (Enter starting location, e.g., Hospital)" << endl;
+        cout << "4. Ambulance Route Optimization (Enter starting and destination locations, e.g., Hospital and Accident Site)" << endl;
+        cout << "5. Add Person to Crowd Stack (Enter name of person)" << endl;
         cout << "6. Remove Person from Crowd Stack" << endl;
-        cout << "7. Add Person to Crowd Queue" << endl;
+        cout << "7. Add Person to Crowd Queue (Enter name of person)" << endl;
         cout << "8. Remove Person from Crowd Queue" << endl;
         cout << "9. Exit" << endl;
         cout << "Enter your choice: ";
@@ -208,7 +206,7 @@ int main() {
 
         case 2: {
             string start;
-            cout << "Enter starting point: ";
+            cout << "Enter starting location (e.g., Hospital): ";
             cin >> start;
             emergencyGraph.bfs(start);
             break;
@@ -216,7 +214,7 @@ int main() {
 
         case 3: {
             string start;
-            cout << "Enter starting point: ";
+            cout << "Enter starting location (e.g., Hospital): ";
             cin >> start;
             emergencyGraph.dfs(start);
             break;
@@ -224,9 +222,9 @@ int main() {
 
         case 4: {
             string start, end;
-            cout << "Enter starting point: ";
+            cout << "Enter starting location (e.g., Hospital): ";
             cin >> start;
-            cout << "Enter destination: ";
+            cout << "Enter destination location (e.g., Accident Site): ";
             cin >> end;
             emergencyGraph.ambulanceRouteOptimization(start, end);
             break;
@@ -234,7 +232,7 @@ int main() {
 
         case 5: {
             string name;
-            cout << "Enter person name: ";
+            cout << "Enter person name to add to Stack: ";
             cin >> name;
             crowdControl.addPersonToStack(name);
             break;
@@ -246,7 +244,7 @@ int main() {
 
         case 7: {
             string name;
-            cout << "Enter person name: ";
+            cout << "Enter person name to add to Queue: ";
             cin >> name;
             crowdControl.addPersonToQueue(name);
             break;
