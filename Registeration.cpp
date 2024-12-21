@@ -5,11 +5,11 @@
 using namespace std;
 class UtilityManagement
 {
-private:
+public:
     double electricityBill = 0.0;
     double waterBill = 0.0;
 
-    void payBill(double &billAmount, const string &billType)
+    void payBill(const string &username, double &billAmount, const string &billType)
     {
         double amount;
         cout << "Enter amount for " << billType << ": ";
@@ -23,18 +23,19 @@ private:
 
         billAmount += amount;
         cout << billType << " Paid: " << amount << "\n";
+        saveBillsToFile(username);
     }
 
     void viewBills()
     {
         cout << "\n--- Current Bill Status ---\n";
-        cout << "Electricity Bill: " << electricityBill << "\n";
-        cout << "Water Bill: " << waterBill << "\n";
+        cout << "Electricity Bill: $" << electricityBill << "\n";
+        cout << "Water Bill: $" << waterBill << "\n";
     }
 
-    void saveBillsToFile()
+    void saveBillsToFile(const string &username)
     {
-        ofstream file("bills.txt");
+        ofstream file(username + "bills.txt");
         if (!file)
         {
             cout << "Error saving bills to file.\n";
@@ -45,9 +46,9 @@ private:
         cout << "Bills saved successfully!\n";
     }
 
-    void loadBillsFromFile()
+    void loadBillsFromFile(const string &username)
     {
-        ifstream file("bills.txt");
+        ifstream file(username + "bills.txt");
         if (!file)
         {
             cout << "No previous bill data found.\n";
@@ -62,16 +63,17 @@ private:
             waterBill = stod(line.substr(pos + 1));
         }
         file.close();
-        cout << "Bills loaded successfully!\n";
+    }
+    void creatFileforBill(const string &username)
+    {
+        ofstream file(username + "bill.txt");
     }
 
 public:
-    UtilityManagement() { loadBillsFromFile(); }
 
-    ~UtilityManagement() { saveBillsToFile(); }
-
-    void manageUtilities()
+    void manageUtilities(const string &username)
     {
+        creatFileforBill(username);
         int choice;
 
         while (true)
@@ -88,10 +90,10 @@ public:
             switch (choice)
             {
             case 1:
-                payBill(electricityBill, "Electricity Bill");
+                payBill(username, electricityBill, "Electricity Bill");
                 break;
             case 2:
-                payBill(waterBill, "Water Bill");
+                payBill(username, waterBill, "Water Bill");
                 break;
             case 3:
                 viewBills();
@@ -106,30 +108,35 @@ public:
     }
 };
 
-struct User {
+struct User
+{
     string name;
     string email;
     string password;
-    User* left;
-    User* right;
+    User *left;
+    User *right;
     int height;
 };
-class Registration {
+class Registration
+{
 
 public:
-    User* root;
+    User *root;
 
-    int height(User* node) {
+    int height(User *node)
+    {
         return node ? node->height : 0;
     }
 
-    int balanceFactor(User* node) {
+    int balanceFactor(User *node)
+    {
         return node ? height(node->left) - height(node->right) : 0;
     }
 
-    User* rotateRight(User* y) {
-        User* x = y->left;
-        User* T2 = x->right;
+    User *rotateRight(User *y)
+    {
+        User *x = y->left;
+        User *T2 = x->right;
 
         x->right = y;
         y->left = T2;
@@ -140,9 +147,10 @@ public:
         return x;
     }
 
-    User* rotateLeft(User* x) {
-        User* y = x->right;
-        User* T2 = y->left;
+    User *rotateLeft(User *x)
+    {
+        User *y = x->right;
+        User *T2 = y->left;
 
         y->left = x;
         x->right = T2;
@@ -153,13 +161,15 @@ public:
         return y;
     }
 
-    User* balance(User* node) {
+    User *balance(User *node)
+    {
         int balance = balanceFactor(node);
 
         if (balance > 1 && balanceFactor(node->left) >= 0)
             return rotateRight(node);
 
-        if (balance > 1 && balanceFactor(node->left) < 0) {
+        if (balance > 1 && balanceFactor(node->left) < 0)
+        {
             node->left = rotateLeft(node->left);
             return rotateRight(node);
         }
@@ -167,7 +177,8 @@ public:
         if (balance < -1 && balanceFactor(node->right) <= 0)
             return rotateLeft(node);
 
-        if (balance < -1 && balanceFactor(node->right) > 0) {
+        if (balance < -1 && balanceFactor(node->right) > 0)
+        {
             node->right = rotateRight(node->right);
             return rotateLeft(node);
         }
@@ -175,9 +186,11 @@ public:
         return node;
     }
 
-    User* insert(User* node, const string& name, const string& email, const string& password) {
-        if (!node) {
-            User* newUser = new User{ name, email, password, nullptr, nullptr, 1 };
+    User *insert(User *node, const string &name, const string &email, const string &password)
+    {
+        if (!node)
+        {
+            User *newUser = new User{name, email, password, nullptr, nullptr, 1};
             return newUser;
         }
 
@@ -185,7 +198,8 @@ public:
             node->left = insert(node->left, name, email, password);
         else if (email > node->email)
             node->right = insert(node->right, name, email, password);
-        else {
+        else
+        {
             cout << "Email already registered. Try logging in.\n";
             loginUser(root);
             return node;
@@ -195,13 +209,15 @@ public:
         return balance(node);
     }
 
-    User* findMin(User* node) {
+    User *findMin(User *node)
+    {
         while (node->left)
             node = node->left;
         return node;
     }
 
-    User* remove(User* node, const string& email) {
+    User *remove(User *node, const string &email)
+    {
         if (!node)
             return node;
 
@@ -209,13 +225,17 @@ public:
             node->left = remove(node->left, email);
         else if (email > node->email)
             node->right = remove(node->right, email);
-        else {
-            if (!node->left || !node->right) {
-                User* temp = node->left ? node->left : node->right;
+        else
+        {
+            if (!node->left || !node->right)
+            {
+                User *temp = node->left ? node->left : node->right;
                 delete node;
                 return temp;
-            } else {
-                User* temp = findMin(node->right);
+            }
+            else
+            {
+                User *temp = findMin(node->right);
                 node->email = temp->email;
                 node->name = temp->name;
                 node->password = temp->password;
@@ -227,27 +247,33 @@ public:
         return balance(node);
     }
 
-    void inOrder(User* node) {
-        if (node) {
+    void inOrder(User *node)
+    {
+        if (node)
+        {
             inOrder(node->left);
             cout << "Name: " << node->name << ", Email: " << node->email << "\n";
             inOrder(node->right);
         }
     }
 
-    void saveToFile(User* node, ofstream& file) {
-        if (node) {
+    void saveToFile(User *node, ofstream &file)
+    {
+        if (node)
+        {
             saveToFile(node->left, file);
             file << node->name << "," << node->email << "," << node->password << "\n";
             saveToFile(node->right, file);
         }
     }
 
-    User* loadFromFile(User* node, const string& name, const string& email, const string& password) {
+    User *loadFromFile(User *node, const string &name, const string &email, const string &password)
+    {
         return insert(node, name, email, password);
     }
 
-    string hashPassword(const string& password) {
+    string hashPassword(const string &password)
+    {
         string hashed;
         for (char c : password)
             hashed += to_string((int)c + 3);
@@ -257,7 +283,8 @@ public:
 public:
     Registration() : root(nullptr) {}
 
-    void registerUser() {
+    void registerUser()
+    {
         string name, email, password;
 
         cout << "Enter your name: ";
@@ -273,7 +300,8 @@ public:
         cout << "Registration successful!\n";
     }
 
-    void loginUser(User* node) {
+    void loginUser(User *node)
+    {
         string email, password;
         cout << "Enter your email: ";
         cin.ignore();
@@ -282,17 +310,24 @@ public:
         getline(cin, password);
 
         string hashedPassword = hashPassword(password);
-        User* temp = root;
+        User *temp = root;
 
-        while (temp) {
-            if (email == temp->email && hashedPassword == temp->password) {
+        while (temp)
+        {
+            if (email == temp->email && hashedPassword == temp->password)
+            {
                 cout << "Login successful! Welcome, " << temp->name << "!\n";
                 UtilityManagement u;
-                u.manageUtilities();
+                u.loadBillsFromFile(temp->name);
+                u.manageUtilities(temp->name);
                 return;
-            } else if (email < temp->email) {
+            }
+            else if (email < temp->email)
+            {
                 temp = temp->left;
-            } else {
+            }
+            else
+            {
                 temp = temp->right;
             }
         }
@@ -300,9 +335,11 @@ public:
         cout << "Invalid email or password.\n";
     }
 
-    void saveToFile() {
+    void saveToFile()
+    {
         ofstream file("users_avl.txt");
-        if (!file) {
+        if (!file)
+        {
             cout << "Error saving data to file.\n";
             return;
         }
@@ -312,15 +349,18 @@ public:
         cout << "Data saved successfully!\n";
     }
 
-    void loadFromFile() {
+    void loadFromFile()
+    {
         ifstream file("users_avl.txt");
-        if (!file) {
+        if (!file)
+        {
             cout << "No previous data found.\n";
             return;
         }
 
         string line, name, email, password;
-        while (getline(file, line)) {
+        while (getline(file, line))
+        {
             size_t pos1 = line.find(',');
             size_t pos2 = line.find(',', pos1 + 1);
             name = line.substr(0, pos1);
@@ -330,16 +370,17 @@ public:
             root = loadFromFile(root, name, email, password);
         }
         file.close();
-        cout << "Data loaded successfully!\n";
     }
 
-    void displayUsers() {
+    void displayUsers()
+    {
         cout << "\n--- Registered Users ---\n";
         inOrder(root);
         cout << "-------------------------\n";
     }
 
-    void deleteUser(const string& email) {
+    void deleteUser(const string &email)
+    {
         root = remove(root, email);
     }
 };
@@ -375,10 +416,10 @@ int main()
 
             do
             {
-                cout << "Enter the password :";
-                cin >> adminPassword;
                 cout << "Enter the username :";
                 cin >> adminUsername;
+                cout << "Enter the password :";
+                cin >> adminPassword;
                 if (adminPassword == "z123" && adminUsername == "z123")
                 {
                     opt = false;
@@ -413,40 +454,41 @@ int main()
                         }
                     }
                 }
-exit_admin:;
+
             } while (opt);
 
             break;
         case 2:
-    while (true)
-    {
-        cout << "\n--- User Registration and Login System ---\n";
-        cout << "1. Register\n";
-        cout << "2. Login\n";
-        cout << "3. Exit\n";
-        cout << "Enter your choice: ";
-        while (!(cin >> choice))
-        {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "Invalid input. Please enter a valid number: ";
+            while (true)
+            {
+                cout << "\n--- User Registration and Login System ---\n";
+                cout << "1. Register\n";
+                cout << "2. Login\n";
+                cout << "3. Exit\n";
+                cout << "Enter your choice: ";
+                while (!(cin >> choice))
+                {
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    cout << "Invalid input. Please enter a valid number: ";
+                }
+                switch (choice)
+                {
+                case 1:
+                    r.registerUser();
+                    break;
+                case 2:
+                    r.loginUser(head);
+                    break;
+                case 3:
+                    r.saveToFile(); // Save data before exiting
+                    cout << "Exiting...\n";
+                    return 0;
+                default:
+                    cout << "Invalid choice. Try again.\n";
+                }
+            }
         }
-        switch (choice)
-        {
-        case 1:
-            r.registerUser();
-            break;
-        case 2:
-            r.loginUser(head);
-            break;
-        case 3:
-            r.saveToFile(); // Save data before exiting
-            cout << "Exiting...\n";
-            return 0;
-        default:
-            cout << "Invalid choice. Try again.\n";
-        }
-    }
-        }
+    exit_admin:;
     }
 }
